@@ -20,7 +20,8 @@ protected:
     virtual void run () {}
 private:
     thread_t myHandle;
-    void (*body)(void*); void* arg;
+    void (*body)(void*);
+    void* arg;
 };
 
 
