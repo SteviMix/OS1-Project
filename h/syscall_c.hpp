@@ -7,7 +7,7 @@
 #include "../lib/hw.h"
 void* mem_alloc(size_t size);
 
-int mem_free();
+int mem_free(void* ptr);
 
 class _thread;
 typedef _thread* thread_t;
