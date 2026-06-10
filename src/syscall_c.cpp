@@ -6,18 +6,16 @@
 #include "../lib/hw.h"
 #include "../lib/console.h"
 void* mem_alloc(size_t size) {
-
-    void* volatile ptr;
+    void* ptr;
     __asm__ volatile (
-        "mv a0, %1\t\n"
-        "mv a1, %2\t\n"
-        "ecall\t\n"
-        "mv %0, a0"
+        "li a0, 1\n"        // hardkodirano 0x01
+        "mv a1, %1\n"       // size
+        "ecall\n"
+        "mv %0, a0\n"
         : "=r"(ptr)
-        : "r"(0x01), "r" (size)
+        : "r"(size)
         : "a0", "a1"
-        );
-
+    );
     return ptr;
 }
 

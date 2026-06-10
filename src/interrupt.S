@@ -2,7 +2,7 @@
 
 .align 4
 .global interrupt
-.type interrupt, @funtion
+.type interrupt, @function
 interrupt:
     addi sp, sp, -256
 

@@ -13,7 +13,9 @@ void RiscV::handleInterrupt(uint64* sp) {
     uint64 isInterrupt = scause & 0x8000000000000000UL;
     uint64 causecode = scause & 0x7FFFFFFFFFFFFFFFUL;
 
+
     if (isInterrupt) {
+        w_sepc(sepc+4);
 
     }else {
         if (causecode == 8 || causecode == 9) {
@@ -41,7 +43,7 @@ void RiscV::handleInterrupt(uint64* sp) {
             w_sepc(sepc+4);
         }
         else {
-
+            w_sepc(sepc+4);
         }
     }
 }
