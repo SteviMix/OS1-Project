@@ -7,7 +7,7 @@
 
 
 #include "../lib/hw.h"
-extern "C" void interrupt_handler(uint64* sp);
+extern "C" void trap_handler(uint64* sp);
 class RiscV
 {
 public:
@@ -88,9 +88,9 @@ public:
 
 
 private:
-    static void handleInterrupt(uint64* sp);
+    static void handleTrap(uint64* sp);
 
-    friend void interrupt_handler(uint64* sp);
+    friend void trap_handler(uint64* sp);
 };
 
 

@@ -3,12 +3,12 @@
 #include "../h/syscall_c.hpp"
 #include "../lib/console.h"
 
-extern "C" void interrupt();
+extern "C" void trap();
 
 int main() {
     MemoryAllocator::init();
     __putc('a');
-    RiscV::w_stvec((uint64)&interrupt);
+    RiscV::w_stvec((uint64)&trap);
     __putc('A');
     void * ptr = mem_alloc(64);
     __putc('B');

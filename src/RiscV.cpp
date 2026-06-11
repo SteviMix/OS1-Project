@@ -5,7 +5,7 @@
 #include "../h/MemoryAllocator.hpp"
 #include "../lib/console.h"
 
-void RiscV::handleInterrupt(uint64* sp) {
+void RiscV::handleTrap(uint64* sp) {
 
     uint64 scause = r_scause();
     uint64 sepc = r_sepc();
@@ -48,6 +48,6 @@ void RiscV::handleInterrupt(uint64* sp) {
     }
 }
 
-void interrupt_handler(uint64 *sp) {
-    RiscV::handleInterrupt(sp);
+void trap_handler(uint64 *sp) {
+    RiscV::handleTrap(sp);
 }
