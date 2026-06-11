@@ -5,7 +5,7 @@
 
 
 #include "../h/Scheduler.hpp"
-#include "../h/TCB.hpp"
+#include "../h/tcb.hpp"
 
 
 TCB* Scheduler::head = nullptr;

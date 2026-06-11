@@ -7,6 +7,11 @@
 
 #include "../lib/hw.h"
 
+
+
+extern "C" void contextSwitch(uint64* oldSP, uint64* newSP);
+
+
 class TCB {
 public:
 
@@ -20,13 +25,8 @@ public:
 
     static TCB* running;
 
-
     TCB* next;
     TCB* nextGlobal;
-    struct Context {
-        uint64 ra;
-        uint64 sp;
-    };
 
     bool isFinished() const {return finished;}
 
@@ -35,13 +35,15 @@ public:
 private:
     TCB (void (*body)(void*), void* arg, void* stack);
 
-    Context context;
+    uint64 sp;
     void* stack;
     bool finished;
     void (*body) (void*);
     void *arg;
 
-    static void contextSwitch(Context* oldContext, Context* newContext);
+    friend void contextSwitch(uint64* oldSP, uint64* newSP);
 
     static void threadWrapper();
-};OS_PROJEKAT_TCB_HPP
+};
+
+#endif //OS_PROJEKAT_TCB_HPP

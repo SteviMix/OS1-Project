@@ -4,7 +4,8 @@
 #include "../h/RiscV.hpp"
 #include "../h/MemoryAllocator.hpp"
 #include "../lib/console.h"
-
+#include "../h/tcb.hpp"
+#include "../h/syscall_c.hpp"
 void RiscV::handleTrap(uint64* sp) {
 
     uint64 scause = r_scause();
@@ -36,6 +37,34 @@ void RiscV::handleTrap(uint64* sp) {
                     sp[10] = (uint64) ret;
                     break;
 
+                }
+                case 0x11:
+                {
+                    thread_t* handle = (thread_t*)sp[11];
+                    void (*body)(void*) = (void (*)(void*))sp[12];
+                    void* arg = (void*)sp[13];
+
+                    TCB* newThread = TCB::createThread(body, arg);
+
+
+                    if (handle != nullptr) {
+                        *handle = (thread_t)newThread;
+                    }
+
+                    sp[10] = (newThread != nullptr) ? 0 : -1;
+
+                    break;
+                }
+                case 0x12:
+                {
+                    TCB::running->setFinished(true);
+                    TCB::dispatch();
+                    break;
+                }
+                case 0x13:
+                {
+                    TCB::dispatch();
+                    break;
                 }
 
             }

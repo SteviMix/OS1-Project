@@ -33,3 +33,40 @@ int mem_free(void* ptr) {
         );
     return  ret;
 }
+
+int thread_create(thread_t *handle, void (*start_routine)(void *), void *arg) {
+    int ret;
+    __asm__ volatile (
+        "mv a1, %1\n\t"
+        "mv a2, %2\n\t"
+        "mv a3, %3\n\t"
+        "li a0, 0x11\n\t"
+        "ecall\n\t"
+        "mv %0, a0"
+        : "=r"(ret)
+        : "r"(handle), "r"(start_routine), "r"(arg)
+        : "a0", "a1", "a2", "a3"
+    );
+    return ret;
+}
+
+void thread_dispatch() {
+    __asm__ volatile (
+        "li a0, 0x13\n\t"
+        "ecall"
+        : : : "a0"
+    );
+}
+
+int thread_exit() {
+    int ret;
+    __asm__ volatile (
+        "li a0, 0x12\n\t"
+        "ecall\n\t"
+        "mv %0, a0"
+        : "=r"(ret)
+        :
+        : "a0"
+    );
+    return ret;
+}

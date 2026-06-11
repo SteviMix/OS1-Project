@@ -13,7 +13,7 @@ public:
     static void put(TCB* tcb);
 
 private:
-    TCB* head;
-    TCB* tail;
+    static TCB* head;
+    static TCB* tail;
 };
 #endif //OS_PROJEKAT_SCHEDULER_HPP
