@@ -6,8 +6,8 @@
 #define OS_PROJEKAT_SYSCALL_CPP_HPP
 
 #include "syscall_c.hpp"
-void* ::operator new (size_t);
-void ::operator delete (void*);
+void* operator new (size_t);
+void operator delete (void*);
 class Thread {
 public:
     Thread (void (*body)(void*), void* arg);
