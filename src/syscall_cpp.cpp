@@ -11,7 +11,7 @@ void* operator new(size_t size) {
     return mem_alloc(size);
 }
 
-void operator delete(void* ptr) noexcept {
+void operator delete(void* ptr) {
     mem_free(ptr);
 }
 
@@ -23,11 +23,16 @@ void* operator new[](size_t size) {
 void operator delete[](void* ptr) noexcept {
     mem_free(ptr);
 }
-
+class ThreadHelper : public Thread {
+    public:
+    static void invokeRun(Thread* t) {
+        ((ThreadHelper*)t)->run();
+    }
+};
 static void threadWrapper(void* arg) {
     Thread* t = (Thread*) arg;
     if (t != nullptr) {
-        t->run();
+        ThreadHelper::invokeRun(t);
     }
 }
 
@@ -52,5 +57,4 @@ void Thread::dispatch () {
 }
 
 Thread::~Thread () {
-    delete myHandle;
 }
