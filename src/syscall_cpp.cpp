@@ -24,12 +24,22 @@ void operator delete[](void* ptr) noexcept {
     mem_free(ptr);
 }
 
-Thread::Thread (void (*body)(void*), void* arg) {
-    thread_create(&this->myHandle, body, arg);
+static void threadWrapper(void* arg) {
+    Thread* t = (Thread*) arg;
+    if (t != nullptr) {
+        t->run();
+    }
 }
 
+Thread::Thread (void (*body)(void*), void* arg): body(body), arg(arg) {
+    thread_create(&myHandle, body, arg);
+}
+
+Thread::Thread(): body(nullptr), arg(nullptr) {
+    thread_create(&myHandle, threadWrapper, this);
+}
 int Thread::start() {
-    thread_start(this->myHandle);
+    thread_start(myHandle);
     return 0;
 }
 
