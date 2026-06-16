@@ -75,3 +75,16 @@ int thread_exit() {
     );
     return ret;
 }
+
+int thread_start(thread_t handle) {
+    int ret;
+    __asm__ volatile (
+        "mv a1, %1 \t\n"
+        "li a0, 0x14 \t\n"
+        "ecall \n"
+        "mv %0, a0 \n"
+        : "=r"(ret)
+        : "r" (handle)
+        );
+    return ret;
+}

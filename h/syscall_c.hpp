@@ -22,6 +22,8 @@ int thread_exit();
 
 void thread_dispatch();
 
+int thread_start(thread_t handle);
+
 class _sem;
 typedef _sem* sem_t;
 

@@ -3,6 +3,7 @@
 //
 #include "../h/RiscV.hpp"
 #include "../h/MemoryAllocator.hpp"
+#include "../h/Scheduler.hpp"
 #include "../lib/console.h"
 #include "../h/tcb.hpp"
 #include "../h/syscall_c.hpp"
@@ -65,6 +66,16 @@ void RiscV::handleTrap(uint64* sp) {
                 case 0x13:
                 {
                     TCB::dispatch();
+                    break;
+                }
+                case 0x14: {
+                    TCB* threadToStart = (TCB*)sp[11];
+                    if (threadToStart != nullptr) {
+                        Scheduler::put(threadToStart);
+                        sp[10] = 0;
+                    }else {
+                        sp[10] = -1;
+                    }
                     break;
                 }
 
