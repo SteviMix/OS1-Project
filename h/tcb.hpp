@@ -18,7 +18,7 @@ public:
     ~TCB();
 
     //Constructor for creating threads
-    static TCB* createThread(void (*body)(void*), void* arg);
+    static TCB* createThread(void (*body)(void*), void* arg, void* stackSpace);
 
     // Method for contextSwitch
     static void dispatch();

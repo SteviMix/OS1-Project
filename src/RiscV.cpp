@@ -43,8 +43,9 @@ void RiscV::handleTrap(uint64* sp) {
                     thread_t* handle = (thread_t*)sp[11];
                     void (*body)(void*) = (void (*)(void*))sp[12];
                     void* arg = (void*)sp[13];
+                    void* stackSpace = (void*)sp[14];
 
-                    TCB* newThread = TCB::createThread(body, arg);
+                    TCB* newThread = TCB::createThread(body, arg, stackSpace);
 
 
                     if (handle != nullptr) {

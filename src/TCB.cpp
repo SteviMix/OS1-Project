@@ -41,16 +41,12 @@ void TCB::threadWrapper() {
 }
 
 
-TCB* TCB::createThread(void (*body)(void*), void* arg) {
+TCB* TCB::createThread(void (*body)(void*), void* arg, void* stackSpace) {
 
     void* tcbSpace = MemoryAllocator::mem_alloc(sizeof(TCB));
-
-    void* stackSpace = nullptr;
-    if (body != nullptr) {
-        stackSpace = MemoryAllocator::mem_alloc(DEFAULT_STACK_SIZE);
+    if (tcbSpace == nullptr) {
+        return nullptr;
     }
-
-
     return new (tcbSpace) TCB(body, arg, stackSpace);
 }
 

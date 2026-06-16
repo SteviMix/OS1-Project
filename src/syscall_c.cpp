@@ -36,15 +36,20 @@ int mem_free(void* ptr) {
 
 int thread_create(thread_t *handle, void (*start_routine)(void *), void *arg) {
     int ret;
+    void* stack_space = mem_alloc(DEFAULT_STACK_SIZE);
+    if (stack_space == nullptr) {
+        return -1;
+    }
     __asm__ volatile (
         "mv a1, %1\n\t"
         "mv a2, %2\n\t"
         "mv a3, %3\n\t"
+        "mv a4, %4\n\t"
         "li a0, 0x11\n\t"
         "ecall\n\t"
         "mv %0, a0"
         : "=r"(ret)
-        : "r"(handle), "r"(start_routine), "r"(arg)
+        : "r"(handle), "r"(start_routine), "r"(arg), "r"(stack_space)
         : "a0", "a1", "a2", "a3"
     );
     return ret;
