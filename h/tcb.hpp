@@ -36,7 +36,8 @@ private:
     TCB (void (*body)(void*), void* arg, void* stack);
 
     uint64 sp;
-    void* stack;
+    void* userStack;
+    void* kernelStack;
     bool finished;
     void (*body) (void*);
     void *arg;
