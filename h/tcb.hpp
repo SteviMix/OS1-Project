@@ -14,7 +14,7 @@ extern "C" void contextSwitch(uint64* oldSP, uint64* newSP);
 
 class TCB {
 public:
-
+    TCB();
     ~TCB();
 
     //Constructor for creating threads
@@ -33,7 +33,7 @@ public:
     void setFinished(bool val){ finished = val;}
 
 private:
-    TCB (void (*body)(void*), void* arg, void* stack);
+    TCB (void (*body)(void*), void* arg, void* stackSpace, void* kernelStack);
 
     uint64 sp;
     void* userStack;

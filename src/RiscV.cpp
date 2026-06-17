@@ -10,19 +10,19 @@
 void RiscV::handleTrap(uint64* sp) {
 
     uint64 scause = r_scause();
-    uint64 sepc = r_sepc();
+    uint64 volatile sepc = r_sepc();
+    uint64 volatile sstatus = r_sstatus();
 
     uint64 isInterrupt = scause & 0x8000000000000000UL;
     uint64 causecode = scause & 0x7FFFFFFFFFFFFFFFUL;
 
 
     if (isInterrupt) {
-        w_sepc(sepc+4);
 
     }else {
         if (causecode == 8 || causecode == 9) {
             uint64 operationCode = sp[10];
-
+            sepc += 4;
             switch (operationCode) {
                 case 0x01:{
                     size_t size = sp[11];
@@ -78,12 +78,14 @@ void RiscV::handleTrap(uint64* sp) {
 
             }
 
-            w_sepc(sepc+4);
         }
         else {
-            w_sepc(sepc+4);
+            sepc+=4;
         }
     }
+
+    w_sstatus(sstatus);
+    w_sepc(sepc);
 }
 
 void trap_handler(uint64 *sp) {
