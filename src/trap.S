@@ -26,6 +26,7 @@ trap:
     .endr
 
     addi sp,sp,256
+
     csrw sscratch, sp
     mv sp, t0
 

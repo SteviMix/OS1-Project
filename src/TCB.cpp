@@ -28,7 +28,7 @@ TCB::TCB(void (*body)(void*), void* arg, void* stackSpace, void* kernelStack)
 
         uint64* kernelStackTop = (uint64*)((char*)kernelStack + DEFAULT_STACK_SIZE);
         this->sp = (uint64)(kernelStackTop - 13);
-        ((uint64*)this->sp)[12] = (uint64)&TCB::threadWrapper;
+        ((uint64*)this->sp)[12] = (uint64)&threadWrapper;
     } else {
 
         this->sp = 0;
@@ -79,7 +79,6 @@ TCB* TCB::createThread(void (*body)(void*), void* arg, void* stackSpace) {
 
 void TCB::dispatch() {
     TCB* oldTCB = running;
-
     TCB* newTCB = Scheduler::get();
 
     if (oldTCB && !oldTCB->isFinished()) {
@@ -89,6 +88,8 @@ void TCB::dispatch() {
     if (newTCB != nullptr && oldTCB != newTCB) {
         running = newTCB;
         contextSwitch(&oldTCB->sp, &newTCB->sp);
+
+        RiscV::w_sscratch((uint64)running->kernelStack+DEFAULT_STACK_SIZE);
     }
 }
 

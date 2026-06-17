@@ -3,7 +3,7 @@
 
 
 contextSwitch:
-
+    sd sp, 0(a0)
     //Push registers that trap doesn't push
     addi sp, sp, -104
 
