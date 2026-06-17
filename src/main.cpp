@@ -24,17 +24,33 @@ public:
         }
     }
 };
-
+void worker_c(void* arg) {
+    char id = (char)(uint64)arg;
+    for (int i = 0; i<5; i++) {
+        __putc(id);
+        thread_dispatch();
+    }
+    thread_exit();
+};
 void userMain() {
     __putc('S'); __putc('t'); __putc('a'); __putc('r'); __putc('t'); __putc('\n');
 
     // Test operatora new (alokator memorije)
+    __putc('1');
     TestThread* t1 = new TestThread('A');
+
+    __putc('2');
     TestThread* t2 = new TestThread('B');
+
+    __putc('3');
+    thread_t t3;
+    thread_create(&t3, worker_c, (void*)(uint64)'C');
+
 
     // Ubacujemo ih u red spremnih
     t1->start();
     t2->start();
+    thread_start(t3);
 
     // userMain mora da prepušta procesor kako bi t1 i t2 dobili šansu da rade.
     // Vrtimo dovoljno iteracija da niti stignu da završe svoj posao.
@@ -42,15 +58,13 @@ void userMain() {
         Thread::dispatch();
     }
 
+
     // Oslobađamo objekte (test operatora delete)
     delete t1;
     delete t2;
 
     __putc('\n'); __putc('E'); __putc('n'); __putc('d'); __putc('\n');
 
-    // Gašenje QEMU emulatora slanjem specijalnog koda na hardversku adresu
-    uint32* emulator_stop = (uint32*)0x10000;
-    *emulator_stop = 0x5555;
 }
 extern "C" void trap();
 int main() {
@@ -61,6 +75,7 @@ int main() {
 
     Thread* userThread = new Thread(reinterpret_cast<void(*)(void*)>(userMain), nullptr);
     userThread->start();
+    __putc('\n');
     while (true) {
         Thread::dispatch();
     }

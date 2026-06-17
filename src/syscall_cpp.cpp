@@ -34,6 +34,7 @@ static void threadWrapper(void* arg) {
     if (t != nullptr) {
         ThreadHelper::invokeRun(t);
     }
+    thread_exit();
 }
 
 Thread::Thread (void (*body)(void*), void* arg): body(body), arg(arg) {

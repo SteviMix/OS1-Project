@@ -59,8 +59,11 @@ void RiscV::handleTrap(uint64* sp) {
                 }
                 case 0x12:
                 {
-                    TCB::running->setFinished(true);
+                    if (TCB::running != nullptr) {
+                        TCB::running->setFinished(true);
+                    }
                     TCB::dispatch();
+                    sp[10] = 0;
                     break;
                 }
                 case 0x13:
