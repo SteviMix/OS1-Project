@@ -31,11 +31,18 @@ public:
     bool isFinished() const {return finished;}
 
     void setFinished(bool val){ finished = val;}
+    struct Context {
+        uint64 ra;
+        uint64 sp;
+        uint64 sscratch;
+    };
 
 private:
     TCB (void (*body)(void*), void* arg, void* stackSpace, void* kernelStack);
 
     uint64 sp;
+    Context context;
+    void* sysStackTop;
     void* userStack;
     void* kernelStack;
     bool finished;

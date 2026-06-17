@@ -22,43 +22,41 @@ TCB::TCB() {
     nextGlobal = nullptr;
 }
 TCB::TCB(void (*body)(void*), void* arg, void* stackSpace, void* kernelStack)
-    : next(nullptr), nextGlobal(nullptr), sp(0), userStack(stackSpace), kernelStack(kernelStack), finished(false), body(body), arg(arg)
 {
+    this->body= body;
+    this->arg = arg;
+    this->userStack = stackSpace;
+    this->kernelStack = kernelStack;
+
+    if (kernelStack != nullptr) {
+        this->sysStackTop = (uint64*)((char*)kernelStack+DEFAULT_STACK_SIZE);
+    }else {
+        this->sysStackTop = nullptr;
+    }
     if (body != nullptr) {
 
-        uint64* kernelStackTop = (uint64*)((char*)kernelStack + DEFAULT_STACK_SIZE);
-        this->sp = (uint64)(kernelStackTop - 13);
-        ((uint64*)this->sp)[12] = (uint64)&threadWrapper;
+        this->context.ra = (uint64) &threadWrapper;
+        this->context.sp = (uint64)userStack+DEFAULT_STACK_SIZE;
+        this->context.sscratch = 0;
     } else {
-
-        this->sp = 0;
+        this->context.ra = 0;
+        this->context.sp = 0;
+        this->context.sscratch = 0;
     }
 }
 
 
 void TCB::threadWrapper() {
-    RiscV::w_sepc((uint64)running->body);
+
+    __asm__ volatile ("csrw sscratch, %0" : : "r" (running->sysStackTop));
 
     uint64 sstatus = RiscV::r_sstatus();
-    sstatus &= ~(1<<8);
-    sstatus |= (1<<5);
+    sstatus &= ~(1<<8); // SPP = 0 (Korisnički mod)
+    sstatus |= (1<<5);  // SPIE = 1 (Uključeni prekidi)
     RiscV::w_sstatus(sstatus);
 
-    uint64 arg = (uint64) running->arg;
-    uint64 userSp = (uint64)running->userStack+DEFAULT_STACK_SIZE;
-    uint64 kernelsp = (uint64)running->kernelStack+DEFAULT_STACK_SIZE;
-    uint64 returnAddress = (uint64)&thread_exit;
-
-    __asm__ volatile(
-        "mv a0, %0 \t\n"
-        "csrw sscratch, %2 \t\n"
-        "mv sp, %1 \t\n"
-        "mv ra, %3 \n\t"
-        "sret \n\t"
-        :
-        : "r"(arg), "r"(userSp), "r" (kernelsp), "r" (returnAddress)
-        );
-
+    running->body(running->arg);
+    thread_exit();
 }
 
 
