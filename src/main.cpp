@@ -74,6 +74,11 @@ int main() {
     TCB::running = TCB::createThread(nullptr,nullptr,nullptr);
     __putc('X'); __putc('\n');
 
+    void* ptr = mem_alloc(50);
+    __putc('Z');__putc('\n');
+    mem_free(ptr);
+    __putc('C');__putc('\n');
+
     Thread* userThread = new Thread(reinterpret_cast<void(*)(void*)>(userMain), nullptr);
     __putc('X');__putc('\n');
     userThread->start();
