@@ -23,6 +23,7 @@ void RiscV::handleTrap(uint64* sp) {
         if (causecode == 8 || causecode == 9) {
             uint64 operationCode = sp[10];
             sepc += 4;
+            w_sepc(sepc);
             switch (operationCode) {
                 case 0x01:{
                     size_t size = sp[11];
@@ -85,7 +86,7 @@ void RiscV::handleTrap(uint64* sp) {
     }
 
     w_sstatus(sstatus);
-    w_sepc(sepc);
+
 }
 
 void trap_handler(uint64 *sp) {

@@ -21,13 +21,15 @@ trap:
 
     ld t0, 16(sp)
 
+    csrw sscratch, t0
+
     .irp index, 1, 5, 6, 7, 10, 11, 12, 13, 14, 15, 16, 17, 28, 29, 30, 31
     ld x\index, \index*8(sp)
     .endr
 
     addi sp,sp,256
 
-    csrw sscratch, sp
+    csrrw sp, sscratch, sp
     mv sp, t0
 
     sret

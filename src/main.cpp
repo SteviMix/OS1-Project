@@ -72,7 +72,6 @@ int main() {
 
     RiscV::w_stvec((uint64) &trap);
     TCB::running = TCB::createThread(nullptr,nullptr,nullptr);
-    __asm__ volatile ("csrw sscratch, sp");
     __putc('X'); __putc('\n');
 
     Thread* userThread = new Thread(reinterpret_cast<void(*)(void*)>(userMain), nullptr);
