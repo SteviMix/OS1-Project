@@ -37,22 +37,15 @@ static void threadWrapper(void* arg) {
     thread_exit();
 }
 
-Thread::Thread (void (*body)(void*), void* arg):myHandle(nullptr), body(body), arg(arg) {
-
+Thread::Thread (void (*body)(void*), void* arg): body(body), arg(arg) {
+    thread_create(&myHandle, body, arg);
 }
 
-Thread::Thread(): myHandle(nullptr), body(nullptr), arg(nullptr) {
-
+Thread::Thread(): body(nullptr), arg(nullptr) {
+    thread_create(&myHandle, threadWrapper, this);
 }
 int Thread::start() {
-    if (myHandle != nullptr) {
-        return -1;
-    }
-    if (body != nullptr) {
-        return thread_create(&myHandle, body, arg);
-    }else {
-        return thread_create(&myHandle, threadWrapper, this);
-    }
+    thread_start(myHandle);
     return 0;
 }
 

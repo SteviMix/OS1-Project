@@ -14,7 +14,7 @@ extern "C" void contextSwitch(uint64* oldSP, uint64* newSP);
 
 class TCB {
 public:
-    TCB();
+
     ~TCB();
 
     //Constructor for creating threads
@@ -31,26 +31,12 @@ public:
     bool isFinished() const {return finished;}
 
     void setFinished(bool val){ finished = val;}
-    struct Context {
-        uint64 ra;
-        uint64 sp;
-        uint64 sscratch;
-    };
 
-    static void initMainSscratch() {
-        if (running != nullptr && running->kernelStack != nullptr) {
-            uint64 kernelStackTop = (uint64)running->kernelStack+DEFAULT_STACK_SIZE;
-            __asm__ volatile ("csrw sscratch, %0" : : "r" (kernelStackTop));
-        }
-    }
 private:
-    TCB (void (*body)(void*), void* arg, void* stackSpace, void* kernelStack);
+    TCB (void (*body)(void*), void* arg, void* stack);
 
     uint64 sp;
-    Context context;
-    void* sysStackTop;
-    void* userStack;
-    void* kernelStack;
+    void* stack;
     bool finished;
     void (*body) (void*);
     void *arg;

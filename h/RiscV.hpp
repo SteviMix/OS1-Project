@@ -11,9 +11,7 @@ extern "C" void trap_handler(uint64* sp);
 class RiscV
 {
 public:
-    static void w_sscratch(uint64 val) {
-        __asm__ volatile ("csrw sscratch, %0" : : "r"(val));
-    }
+
     // read register scause
     static uint64 r_scause();
 

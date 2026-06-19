@@ -50,7 +50,7 @@ void userMain() {
     // Ubacujemo ih u red spremnih
     t1->start();
     t2->start();
-
+    thread_start(t3);
 
     // userMain mora da prepušta procesor kako bi t1 i t2 dobili šansu da rade.
     // Vrtimo dovoljno iteracija da niti stignu da završe svoj posao.
@@ -72,16 +72,8 @@ int main() {
 
     RiscV::w_stvec((uint64) &trap);
     TCB::running = TCB::createThread(nullptr,nullptr,nullptr);
-    TCB::initMainSscratch();
-    __putc('X'); __putc('\n');
-
-    void* ptr = mem_alloc(50);
-    __putc('Z');__putc('\n');
-    mem_free(ptr);
-    __putc('C');__putc('\n');
 
     Thread* userThread = new Thread(reinterpret_cast<void(*)(void*)>(userMain), nullptr);
-    __putc('X');__putc('\n');
     userThread->start();
     __putc('\n');
     while (true) {
