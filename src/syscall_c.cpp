@@ -88,3 +88,74 @@ int thread_start(thread_t handle) {
         );
     return ret;
 }
+
+int sem_open(sem_t *handle, unsigned init) {
+    int ret;
+    __asm__ volatile (
+        "mv a1, %1 \t\n"
+        "mv a2, %2\t\n"
+        "mv a0, 0x21\t\n"
+        "ecall \n\t"
+        "mv %0, a0 \n"
+        : "=r"(ret)
+        : "r"(handle), "r"(init)
+        : "a0", "a1", "a2"
+        );
+    return ret;
+}
+
+int sem_close(sem_t id) {
+    int ret;
+
+    __asm__ volatile(
+        "mv a1, %1 \n\t"
+        "mv a0, 0x22 \n\t"
+        "ecall \n\t"
+        "mv %0, a0 \n\t"
+        : "=r"(ret)
+        : "r"(id)
+        : "a0", "a1"
+        );
+    return ret;
+}
+
+int sem_wait_n(sem_t id, unsigned n) {
+    int ret;
+
+    __asm__ volatile (
+        "mv a1, %1 \t\n"
+        "mv a2, %2\t\n"
+        "mv a0, 0x25 \n\t"
+        "ecall \n\t"
+        "mv %0, a0 \n\t"
+        : "=r"(ret)
+        : "r"(id), "r"(n)
+        : "a0", "a1", "a2"
+        );
+    return ret;
+}
+
+int sem_signal_n(sem_t id, unsigned n) {
+    int ret;
+
+    __asm__ volatile (
+        "mv a1, %1 \t\n"
+        "mv a2, %2\t\n"
+        "mv a0, 0x26 \n\t"
+        "exall \n\t"
+        "mv %0, a0 \n\t"
+        : "=r"(ret)
+        : "r"(id), "r"(n)
+        : "a0", "a1", "a2"
+        );
+    return ret;
+}
+
+
+int sem_wait(sem_t id) {
+    return sem_wait_n(id, 1);
+}
+
+int sem_signal(sem_t id) {
+    return sem_signal_n(id, 1);
+}

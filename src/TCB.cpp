@@ -18,25 +18,21 @@ TCB::TCB(void (*body)(void*), void* arg, void* stackSpace)
     : next(nullptr), nextGlobal(nullptr), sp(0), stack(stackSpace), finished(false), body(body), arg(arg)
 {
     if (body != nullptr) {
-
         uint64* stackTop = (uint64*)((char*)stackSpace + DEFAULT_STACK_SIZE);
         this->sp = (uint64)(stackTop - 13);
         ((uint64*)this->sp)[12] = (uint64)&TCB::threadWrapper;
     } else {
-
         this->sp = 0;
     }
 }
 
 
 void TCB::threadWrapper() {
+    RiscV::popSppSpie();
     if (running->body != nullptr) {
         running->body(running->arg);
     }
-
-
     running->setFinished(true);
-
     TCB::dispatch();
 }
 

@@ -12,6 +12,8 @@ class RiscV
 {
 public:
 
+    static void popSppSpie();
+
     // read register scause
     static uint64 r_scause();
 
