@@ -98,6 +98,7 @@ void RiscV::handleTrap(uint64* sp) {
                     break;
                 }
                 case 0x22: {
+
                     sem_t handle = (sem_t)sp[11];
                     if (handle != nullptr) {
                         sp[10] = handle->close();
