@@ -72,6 +72,7 @@ int main() {
 
     RiscV::w_stvec((uint64) &trap);
     TCB::running = TCB::createThread(nullptr,nullptr,nullptr);
+    TCB::initMainSscratch();
     __putc('X'); __putc('\n');
 
     void* ptr = mem_alloc(50);

@@ -37,6 +37,12 @@ public:
         uint64 sscratch;
     };
 
+    static void initMainSscratch() {
+        if (running != nullptr && running->kernelStack != nullptr) {
+            uint64 kernelStackTop = (uint64)running->kernelStack+DEFAULT_STACK_SIZE;
+            __asm__ volatile ("csrw sscratch, %0" : : "r" (kernelStackTop));
+        }
+    }
 private:
     TCB (void (*body)(void*), void* arg, void* stackSpace, void* kernelStack);
 
