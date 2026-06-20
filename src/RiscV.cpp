@@ -7,6 +7,7 @@
 #include "../lib/console.h"
 #include "../h/tcb.hpp"
 #include "../h/syscall_c.hpp"
+#include "../h/_sem.hpp"
 void RiscV::handleTrap(uint64* sp) {
 
     uint64 scause = r_scause();
@@ -73,6 +74,48 @@ void RiscV::handleTrap(uint64* sp) {
                 case 0x13:
                 {
                     TCB::dispatch();
+                    break;
+                }
+                case 0x21: {
+                    sem_t* handle = (sem_t*)sp[11];
+                    unsigned init = (unsigned)sp[12];
+                    sem_t newSem = new _sem(init);
+                    if (handle != nullptr) {
+                        *handle = newSem;
+                    }
+                    sp[10] = (newSem != nullptr) ? 0 : -1;
+                    break;
+                }
+                case 0x22: {
+
+                    sem_t handle = (sem_t)sp[11];
+                    if (handle != nullptr) {
+                        sp[10] = handle->close();
+                        delete handle;
+                    }else {
+                        sp[10] = -1;
+                    }
+                    break;
+                }
+                case 0x23:
+                case 0x25: {
+                    sem_t handle = (sem_t)sp[11];
+                    unsigned n = (unsigned) sp[12];
+                    if (handle != nullptr) {
+                        sp[10] = handle->wait(n);
+                    }
+                    else sp[10] = -1;
+                    break;
+                }
+                case 0x24:
+                case 0x26: {
+                    sem_t handle = (sem_t)sp[11];
+                    unsigned n = (unsigned) sp[12];
+                    if (handle != nullptr) {
+                        handle->signal(n);
+                    }else {
+                        sp[10] = -1;
+                    }
                     break;
                 }
 
