@@ -20,13 +20,10 @@ public:
     // Polimorfna metoda koju jezgro treba da izvrši
     void run() override {
         for (int i = 0; i < 5; i++) {
-            Thread::dispatch();
             __putc(id);
-            count ++;
-            // Eksplicitno sinhrono prepuštanje procesora
+            Thread::dispatch();
         }
 
-        __putc(count + '0');__putc('\n');
         mainSem->signal();
 
     }
@@ -53,8 +50,8 @@ void userMain() {
 
     // userMain mora da prepušta procesor kako bi t1 i t2 dobili šansu da rade.
     // Vrtimo dovoljno iteracija da niti stignu da završe svoj posao.
-    for (int i = 0; i < 30; i++) {
-        __putc(mainSem->wait() + '0'); __putc('\n');
+    for (int i = 0; i < 3; i++) {
+        mainSem->wait();
     }
 
 

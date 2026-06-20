@@ -15,7 +15,7 @@ TCB* TCB::running = nullptr;
 
 
 TCB::TCB(void (*body)(void*), void* arg, void* stackSpace)
-    : next(nullptr), nextGlobal(nullptr), sp(0), stack(stackSpace), finished(false), body(body), arg(arg)
+    : next(nullptr), nextGlobal(nullptr), sp(0), stack(stackSpace), finished(false), blocked(false),requestedRes(0)  ,body(body), arg(arg)
 {
     if (body != nullptr) {
 
@@ -55,7 +55,7 @@ void TCB::dispatch() {
 
     TCB* newTCB = Scheduler::get();
 
-    if (oldTCB && !oldTCB->isFinished()) {
+    if (oldTCB && !oldTCB->isFinished() && !oldTCB->isBlocked()) {
         Scheduler::put(oldTCB);
     }
 
