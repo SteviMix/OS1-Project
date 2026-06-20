@@ -38,14 +38,18 @@ static void threadWrapper(void* arg) {
 }
 
 Thread::Thread (void (*body)(void*), void* arg): body(body), arg(arg) {
-    thread_create(&myHandle, body, arg);
+    myHandle = nullptr;
 }
 
 Thread::Thread(): body(nullptr), arg(nullptr) {
-    thread_create(&myHandle, threadWrapper, this);
+    myHandle = nullptr;
 }
 int Thread::start() {
-    thread_start(myHandle);
+    if (body != nullptr) {
+        return thread_create(&myHandle, body, arg);
+    }else {
+        return thread_create(&myHandle, threadWrapper, this);
+    }
     return 0;
 }
 

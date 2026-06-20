@@ -50,8 +50,6 @@ void userMain() {
     // Ubacujemo ih u red spremnih
     t1->start();
     t2->start();
-    thread_start(t3);
-
     // userMain mora da prepušta procesor kako bi t1 i t2 dobili šansu da rade.
     // Vrtimo dovoljno iteracija da niti stignu da završe svoj posao.
     for (int i = 0; i < 20; i++) {

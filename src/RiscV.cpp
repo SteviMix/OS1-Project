@@ -7,6 +7,7 @@
 #include "../lib/console.h"
 #include "../h/tcb.hpp"
 #include "../h/syscall_c.hpp"
+#include "../h/_sem.hpp"
 
 void RiscV::popSppSpie() {
     __asm__ volatile ("csrw sepc, ra");
@@ -58,7 +59,9 @@ void RiscV::handleTrap(uint64* sp) {
                     if (handle != nullptr) {
                         *handle = (thread_t)newThread;
                     }
-
+                    if (newThread != nullptr) {
+                        Scheduler::put(newThread);
+                    }
                     sp[10] = (newThread != nullptr) ? 0 : -1;
 
                     break;
@@ -75,16 +78,6 @@ void RiscV::handleTrap(uint64* sp) {
                 case 0x13:
                 {
                     TCB::dispatch();
-                    break;
-                }
-                case 0x14: {
-                    TCB* threadToStart = (TCB*)sp[11];
-                    if (threadToStart != nullptr) {
-                        Scheduler::put(threadToStart);
-                        sp[10] = 0;
-                    }else {
-                        sp[10] = -1;
-                    }
                     break;
                 }
                 case 0x21: {

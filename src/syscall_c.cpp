@@ -76,25 +76,12 @@ int thread_exit() {
     return ret;
 }
 
-int thread_start(thread_t handle) {
-    int ret;
-    __asm__ volatile (
-        "mv a1, %1 \t\n"
-        "li a0, 0x14 \t\n"
-        "ecall \n"
-        "mv %0, a0 \n"
-        : "=r"(ret)
-        : "r" (handle)
-        );
-    return ret;
-}
-
 int sem_open(sem_t *handle, unsigned init) {
     int ret;
     __asm__ volatile (
         "mv a1, %1 \t\n"
         "mv a2, %2\t\n"
-        "mv a0, 0x21\t\n"
+        "li a0, 0x21\t\n"
         "ecall \n\t"
         "mv %0, a0 \n"
         : "=r"(ret)
@@ -109,7 +96,7 @@ int sem_close(sem_t id) {
 
     __asm__ volatile(
         "mv a1, %1 \n\t"
-        "mv a0, 0x22 \n\t"
+        "li a0, 0x22\n\t"
         "ecall \n\t"
         "mv %0, a0 \n\t"
         : "=r"(ret)
@@ -125,7 +112,7 @@ int sem_wait_n(sem_t id, unsigned n) {
     __asm__ volatile (
         "mv a1, %1 \t\n"
         "mv a2, %2\t\n"
-        "mv a0, 0x25 \n\t"
+        "li a0, 0x25 \n\t"
         "ecall \n\t"
         "mv %0, a0 \n\t"
         : "=r"(ret)
@@ -141,8 +128,8 @@ int sem_signal_n(sem_t id, unsigned n) {
     __asm__ volatile (
         "mv a1, %1 \t\n"
         "mv a2, %2\t\n"
-        "mv a0, 0x26 \n\t"
-        "exall \n\t"
+        "li a0, 0x26 \n\t"
+        "ecall \n\t"
         "mv %0, a0 \n\t"
         : "=r"(ret)
         : "r"(id), "r"(n)

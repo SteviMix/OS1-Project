@@ -51,7 +51,7 @@ void TCB::dispatch() {
 
     TCB* newTCB = Scheduler::get();
 
-    if (oldTCB && !oldTCB->isFinished()) {
+    if (oldTCB && !oldTCB->isFinished() && !oldTCB->isBlocked()) {
         Scheduler::put(oldTCB);
     }
 
