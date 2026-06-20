@@ -16,14 +16,19 @@ private:
 public:
     // Konstruktor postavlja ID i automatski zove zaštićeni Thread()
     TestThread(char id) : Thread(), id(id) {}
-
+    int count = 0;
     // Polimorfna metoda koju jezgro treba da izvrši
     void run() override {
         for (int i = 0; i < 5; i++) {
+            Thread::dispatch();
             __putc(id);
-            Thread::dispatch(); // Eksplicitno sinhrono prepuštanje procesora
+            count ++;
+            // Eksplicitno sinhrono prepuštanje procesora
         }
+
+        __putc(count + '0');__putc('\n');
         mainSem->signal();
+
     }
 };
 void userMain() {
@@ -48,9 +53,9 @@ void userMain() {
 
     // userMain mora da prepušta procesor kako bi t1 i t2 dobili šansu da rade.
     // Vrtimo dovoljno iteracija da niti stignu da završe svoj posao.
-    mainSem->wait();
-    mainSem->wait();
-    mainSem->wait();
+    for (int i = 0; i < 30; i++) {
+        mainSem->wait();
+    }
 
 
 
