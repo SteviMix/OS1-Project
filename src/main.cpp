@@ -9,6 +9,7 @@
 #include "../lib/hw.h" // Koristimo __putc iz hw.lib za štampanje
 
 // Pravimo klasu koja nasleđuje Thread (testira zaštićeni konstruktor i run metodu)
+Semaphore* mainSem;
 class TestThread : public Thread {
 private:
     char id;
@@ -22,19 +23,12 @@ public:
             __putc(id);
             Thread::dispatch(); // Eksplicitno sinhrono prepuštanje procesora
         }
+        mainSem->signal();
     }
-};
-void worker_c(void* arg) {
-    char id = (char)(uint64)arg;
-    for (int i = 0; i<5; i++) {
-        __putc(id);
-        thread_dispatch();
-    }
-    thread_exit();
 };
 void userMain() {
     __putc('S'); __putc('t'); __putc('a'); __putc('r'); __putc('t'); __putc('\n');
-
+    mainSem = new Semaphore(0);
     // Test operatora new (alokator memorije)
     __putc('1');
     TestThread* t1 = new TestThread('A');
@@ -43,26 +37,28 @@ void userMain() {
     TestThread* t2 = new TestThread('B');
 
     __putc('3');
-    thread_t t3;
-    thread_create(&t3, worker_c, (void*)(uint64)'C');
+    TestThread* t3 = new  TestThread('C');
 
 
     // Ubacujemo ih u red spremnih
     t1->start();
     t2->start();
+    t3->start();
 
 
     // userMain mora da prepušta procesor kako bi t1 i t2 dobili šansu da rade.
     // Vrtimo dovoljno iteracija da niti stignu da završe svoj posao.
-    for (int i = 0; i < 20; i++) {
-        Thread::dispatch();
-    }
+    mainSem->wait();
+    mainSem->wait();
+    mainSem->wait();
+
 
 
     // Oslobađamo objekte (test operatora delete)
     delete t1;
     delete t2;
-
+    delete t3;
+    delete mainSem;
     __putc('\n'); __putc('E'); __putc('n'); __putc('d'); __putc('\n');
 
 }
