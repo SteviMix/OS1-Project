@@ -32,12 +32,22 @@ public:
 
     void setFinished(bool val){ finished = val;}
 
+    bool isBlocked() const {return blocked;}
+
+    void setBlocked(bool val){ blocked = val;}
+
+    int getRequestedRes() const {return requestedRes;}
+
+    void setRequestedRes(int val){ requestedRes = val;}
+
 private:
     TCB (void (*body)(void*), void* arg, void* stack);
 
     uint64 sp;
     void* stack;
     bool finished;
+    bool blocked;
+    unsigned requestedRes;
     void (*body) (void*);
     void *arg;
 
