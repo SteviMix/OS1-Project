@@ -28,7 +28,7 @@ public:
 
     }
 };
-void userMain() {
+void userMainMoj() {
     __putc('S'); __putc('t'); __putc('a'); __putc('r'); __putc('t'); __putc('\n');
     mainSem = new Semaphore(0);
     // Test operatora new (alokator memorije)
@@ -65,12 +65,15 @@ void userMain() {
 
 }
 extern "C" void trap();
+extern void userMain();
 int main() {
     MemoryAllocator::init();
 
     RiscV::w_stvec((uint64) &trap);
     TCB::running = TCB::createThread(nullptr,nullptr,nullptr);
-
+    while (true) {
+        putc(getc());
+    }
     Thread* userThread = new Thread(reinterpret_cast<void(*)(void*)>(userMain), nullptr);
     userThread->start();
     __putc('\n');

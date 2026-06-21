@@ -146,3 +146,15 @@ int sem_wait(sem_t id) {
 int sem_signal(sem_t id) {
     return sem_signal_n(id, 1);
 }
+
+int time_sleep(time_t) {
+    return 0;
+}
+
+char getc() {
+    return __getc();
+}
+
+void putc(char c) {
+    __putc(c);
+}
