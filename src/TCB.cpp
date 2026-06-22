@@ -31,6 +31,7 @@ TCB::TCB(void (*body)(void*), void* arg, void* stackSpace)
 
 
 void TCB::threadWrapper() {
+
     RiscV::popSppSpie();
     if (running->body != nullptr) {
         running->body(running->arg);
