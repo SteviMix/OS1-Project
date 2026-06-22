@@ -150,7 +150,7 @@ int sem_signal(sem_t id) {
 int time_sleep(time_t) {
     return 0;
 }
-
+volatile char inputChar = 0;
 char getc() {
     return __getc();
 }

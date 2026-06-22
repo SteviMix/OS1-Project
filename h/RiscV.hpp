@@ -12,6 +12,8 @@ class RiscV
 {
 public:
 
+    static void popSppSpie();
+
     // read register scause
     static uint64 r_scause();
 
@@ -92,7 +94,6 @@ private:
 
     friend void trap_handler(uint64* sp);
 };
-
 
 inline uint64 RiscV::r_scause()
 {

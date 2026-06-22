@@ -8,6 +8,12 @@
 #include "../h/tcb.hpp"
 #include "../h/syscall_c.hpp"
 #include "../h/_sem.hpp"
+
+void RiscV::popSppSpie() {
+    __asm__ volatile ("csrw sepc, ra");
+    __asm__ volatile ("sret");
+}
+
 void RiscV::handleTrap(uint64* sp) {
 
     uint64 scause = r_scause();
@@ -18,7 +24,10 @@ void RiscV::handleTrap(uint64* sp) {
 
 
     if (isInterrupt) {
-        w_sepc(sepc+4);
+        if (causecode == 9) {
+
+            console_handler();
+        }
 
     }else {
         if (causecode == 8 || causecode == 9) {

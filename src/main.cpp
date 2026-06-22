@@ -67,13 +67,13 @@ void userMainMoj() {
 extern "C" void trap();
 extern void userMain();
 int main() {
+
     MemoryAllocator::init();
 
     RiscV::w_stvec((uint64) &trap);
+
     TCB::running = TCB::createThread(nullptr,nullptr,nullptr);
-    while (true) {
-        putc(getc());
-    }
+
     Thread* userThread = new Thread(reinterpret_cast<void(*)(void*)>(userMain), nullptr);
     userThread->start();
     __putc('\n');
