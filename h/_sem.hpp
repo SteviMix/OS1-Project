@@ -15,8 +15,15 @@ public:
     int signal(unsigned n);
     int close();
 
-    void* operator new (size_t size){ return MemoryAllocator::mem_alloc(size); }
-    void operator delete (void* ptr){ MemoryAllocator::mem_free(ptr); }
+    void* operator new (size_t size){
+
+        size_t size_in_blocks = (size + sizeof(FreeMemBlock) + MEM_BLOCK_SIZE -1)/MEM_BLOCK_SIZE;
+        return MemoryAllocator::mem_alloc(size_in_blocks);
+    }
+    void operator delete (void* ptr){
+        if (ptr == nullptr) return;
+        MemoryAllocator::mem_free(ptr);
+    }
 private:
     int val;
     TCB* head;

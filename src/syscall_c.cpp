@@ -3,17 +3,21 @@
 //
 
 #include "../h/syscall_c.hpp"
+
+#include "../h/MemoryAllocator.hpp"
 #include "../lib/hw.h"
 #include "../lib/console.h"
 void* mem_alloc(size_t size) {
     void* ptr;
+
+    size_t size_in_blocks = (size+ sizeof(FreeMemBlock) + MEM_BLOCK_SIZE -1)/MEM_BLOCK_SIZE;
     __asm__ volatile (
         "li a0, 1\n"        // hardkodirano 0x01
         "mv a1, %1\n"       // size
         "ecall\n"
         "mv %0, a0\n"
         : "=r"(ptr)
-        : "r"(size)
+        : "r"(size_in_blocks)
         : "a0", "a1"
     );
     return ptr;
@@ -152,6 +156,7 @@ int time_sleep(time_t) {
 }
 volatile char inputChar = 0;
 char getc() {
+    console_handler();
     return __getc();
 }
 

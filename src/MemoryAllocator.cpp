@@ -19,12 +19,11 @@ void MemoryAllocator::init() {
     is_initialised = true;
 }
 
-void* MemoryAllocator::mem_alloc(size_t size) {
-    if (size == 0) return nullptr;
+void* MemoryAllocator::mem_alloc(size_t size_in_blocks) {
+    if (size_in_blocks == 0) return nullptr;
     FreeMemBlock* curr = free_mem_head;
     FreeMemBlock* prev = nullptr;
 
-    size_t size_in_blocks = (size + sizeof(FreeMemBlock) + MEM_BLOCK_SIZE -1)/MEM_BLOCK_SIZE;
 
     while (curr){
         if (curr->size >= size_in_blocks){

@@ -6,7 +6,7 @@
 #define OS_PROJEKAT_TCB_HPP
 
 #include "../lib/hw.h"
-
+#include "MemoryAllocator.hpp"
 
 
 extern "C" void contextSwitch(uint64* oldSP, uint64* newSP);
@@ -39,6 +39,18 @@ public:
     int getRequestedRes() const {return requestedRes;}
 
     void setRequestedRes(int val){ requestedRes = val;}
+
+    static void* operator new(size_t size){
+
+        size_t size_in_blocks = (size + sizeof(FreeMemBlock) + MEM_BLOCK_SIZE - 1)/MEM_BLOCK_SIZE;
+        return MemoryAllocator::mem_alloc(size_in_blocks);
+
+    }
+
+    static void operator delete(void* ptr){
+        if (ptr == nullptr) return;
+        MemoryAllocator::mem_free(ptr);
+    }
 
 private:
     TCB (void (*body)(void*), void* arg, void* stack);

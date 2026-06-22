@@ -6,6 +6,7 @@
 #include "../h/MemoryAllocator.hpp"
 #include "../h/RiscV.hpp"
 #include "../h/Scheduler.hpp"
+#include "../h/syscall_c.hpp"
 
 inline void* operator new(size_t, void* ptr) {
     return ptr;
@@ -38,17 +39,14 @@ void TCB::threadWrapper() {
 
     running->setFinished(true);
 
-    TCB::dispatch();
+    thread_exit();
 }
 
 
 TCB* TCB::createThread(void (*body)(void*), void* arg, void* stackSpace) {
 
-    void* tcbSpace = MemoryAllocator::mem_alloc(sizeof(TCB));
-    if (tcbSpace == nullptr) {
-        return nullptr;
-    }
-    return new (tcbSpace) TCB(body, arg, stackSpace);
+    TCB* newThread = new TCB(body, arg, stackSpace);
+    return  newThread;
 }
 
 void TCB::dispatch() {
