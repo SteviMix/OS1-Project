@@ -13,16 +13,19 @@ Semaphore* mainSem;
 class TestThread : public Thread {
 private:
     char id;
+    time_t sleeptime;
 public:
     // Konstruktor postavlja ID i automatski zove zaštićeni Thread()
-    TestThread(char id) : Thread(), id(id) {}
+    TestThread(char id, time_t time) : Thread(), id(id), sleeptime(time) {}
     int count = 0;
     // Polimorfna metoda koju jezgro treba da izvrši
     void run() override {
-        for (int i = 0; i < 5; i++) {
-            __putc(id);
-            Thread::dispatch();
-        }
+        __putc(id);
+        __putc('s');
+        time_sleep(sleeptime);
+        __putc(id);
+        __putc('w');
+        __putc('\n');
 
         mainSem->signal();
 
@@ -33,13 +36,13 @@ void userMainMoj() {
     mainSem = new Semaphore(0);
     // Test operatora new (alokator memorije)
     __putc('1');
-    TestThread* t1 = new TestThread('A');
+    TestThread* t1 = new TestThread('A', 200);
 
     __putc('2');
-    TestThread* t2 = new TestThread('B');
+    TestThread* t2 = new TestThread('B', 30);
 
     __putc('3');
-    TestThread* t3 = new  TestThread('C');
+    TestThread* t3 = new  TestThread('C', 100);
 
 
     // Ubacujemo ih u red spremnih
@@ -74,8 +77,10 @@ int main() {
 
     TCB::running = TCB::createThread(nullptr,nullptr,nullptr);
 
-    Thread* userThread = new Thread(reinterpret_cast<void(*)(void*)>(userMain), nullptr);
+    Thread* userThread = new Thread(reinterpret_cast<void(*)(void*)>(userMainMoj), nullptr);
+
     userThread->start();
+
     __putc('\n');
     while (true) {
         Thread::dispatch();

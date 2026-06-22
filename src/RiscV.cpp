@@ -8,6 +8,7 @@
 #include "../h/tcb.hpp"
 #include "../h/syscall_c.hpp"
 #include "../h/_sem.hpp"
+#include "../test/printing.hpp"
 
 void RiscV::popSppSpie() {
     __asm__ volatile ("csrw sepc, ra");
@@ -15,7 +16,7 @@ void RiscV::popSppSpie() {
 }
 
 void RiscV::handleTrap(uint64* sp) {
-
+    uint64 sstatus = r_sstatus();
     uint64 scause = r_scause();
     uint64 sepc = r_sepc();
 
@@ -24,6 +25,15 @@ void RiscV::handleTrap(uint64* sp) {
 
 
     if (isInterrupt) {
+        if (causecode == 1) {
+            __asm__ volatile ("csrc sip, 0x02");
+            TCB::updateSleeping();
+            if (TCB::timeSliceTick()) {
+                TCB::dispatch();
+                w_sstatus(sstatus);
+                w_sepc(sepc);
+            }
+        }
         if (causecode == 9) {
 
             console_handler();
@@ -127,12 +137,38 @@ void RiscV::handleTrap(uint64* sp) {
                     }
                     break;
                 }
+                case 0x31: {
+                    time_t time = (time_t)sp[11];
+
+                    TCB::sleep(time);
+                    sp[10] = 0;
+                    break;
+                }
 
             }
-
             w_sepc(sepc+4);
         }
         else {
+            uint64 scause = r_scause();
+            uint64 stval = r_stval();
+            uint64 stvec = r_stvec();
+            uint64 sepc = r_sepc();
+
+            printString("scause: ");
+            printInt(scause);
+            printString("\n");
+
+            printString("stval: ");
+            printInt(stval);
+            printString("\n");
+
+            printString("stvec: ");
+            printInt(stvec);
+            printString("\n");
+
+            printString("sepc: ");
+            printInt(sepc);
+            printString("\n");
             w_sepc(sepc+4);
         }
     }

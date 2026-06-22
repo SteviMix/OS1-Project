@@ -151,8 +151,19 @@ int sem_signal(sem_t id) {
     return sem_signal_n(id, 1);
 }
 
-int time_sleep(time_t) {
-    return 0;
+int time_sleep(time_t time) {
+    int ret;
+
+    __asm__ volatile(
+        "mv a1, %0 \n\t"
+        "li a0, 0x31 \n\t"
+        "ecall\n\t"
+        "mv %0, a0 \n\t"
+        : "=r" (ret)
+        : "r" (time)
+        : "a0", "a1"
+        );
+    return  ret;
 }
 volatile char inputChar = 0;
 char getc() {

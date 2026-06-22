@@ -13,11 +13,15 @@ inline void* operator new(size_t, void* ptr) {
 }
 
 TCB* TCB::running = nullptr;
-
+uint64 TCB::timeSliceCounter = 0;
+TCB* TCB::sleepingHead = nullptr;
 
 TCB::TCB(void (*body)(void*), void* arg, void* stackSpace)
     : next(nullptr), nextGlobal(nullptr), sp(0), stack(stackSpace), finished(false), blocked(false),requestedRes(0)  ,body(body), arg(arg)
 {
+    this->timeslice = DEFAULT_TIME_SLICE;
+    this->timeToSleep = 0;
+
     if (body != nullptr) {
 
         uint64* stackTop = (uint64*)((char*)stackSpace + DEFAULT_STACK_SIZE);
@@ -30,16 +34,14 @@ TCB::TCB(void (*body)(void*), void* arg, void* stackSpace)
 }
 
 
-void TCB::threadWrapper() {
-
+void TCB::threadWrapper(){
+    if(running->body)
+        RiscV::mc_sstatus(RiscV::SSTATUS_SPP);
+    else
+        RiscV::ms_sstatus(RiscV::SSTATUS_SPP);
+    RiscV::ms_sstatus(RiscV::SSTATUS_SIE);
     RiscV::popSppSpie();
-    if (running->body != nullptr) {
-        running->body(running->arg);
-    }
-
-
-    running->setFinished(true);
-
+    running->body(running->arg);
     thread_exit();
 }
 
@@ -71,3 +73,45 @@ TCB::~TCB() {
     }
 }
 
+bool TCB::timeSliceTick() {
+    timeSliceCounter++;
+    if (running->timeslice > 0 && timeSliceCounter >= running->timeslice) {
+        return true;
+    }
+    return false;
+}
+
+void TCB::updateSleeping() {
+    TCB* curr = sleepingHead;
+    TCB* prev = nullptr;
+
+    while (curr != nullptr) {
+        curr->timeToSleep--;
+
+        if (curr->timeToSleep <= 0) {
+            if (prev == nullptr) sleepingHead = curr->next;
+            else prev->next = curr->next;
+
+            TCB* wakeUp = curr;
+            curr = curr->next;
+
+            wakeUp->setBlocked(false);
+            Scheduler::put(wakeUp);
+        }else {
+            prev = curr;
+            curr = curr->next;
+        }
+    }
+}
+
+void TCB::sleep(uint64 time) {
+    if (time == 0) return;
+
+    running->setBlocked(true);
+
+    running->timeToSleep = time;
+    running->next = sleepingHead;
+    sleepingHead = running;
+
+    TCB::dispatch();
+}

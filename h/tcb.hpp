@@ -52,6 +52,10 @@ public:
         MemoryAllocator::mem_free(ptr);
     }
 
+    static bool timeSliceTick();
+    static void updateSleeping();
+    static void sleep(uint64 time);
+
 private:
     TCB (void (*body)(void*), void* arg, void* stack);
 
@@ -62,8 +66,14 @@ private:
     unsigned requestedRes;
     void (*body) (void*);
     void *arg;
+    uint64 timeslice;
+    static uint64 timeSliceCounter;
+    uint64 timeToSleep;
+    static TCB* sleepingHead;
 
     friend void contextSwitch(uint64* oldSP, uint64* newSP);
+
+    friend class RiscV;
 
     static void threadWrapper();
 };
