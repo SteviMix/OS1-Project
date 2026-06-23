@@ -21,9 +21,9 @@ void PrintHex(uint64 val) {
     const char hexchars[] = "0123456789ABCDEF";
     for (int i = 15; i >=0;i--) {
         uint64 nibble = (val>>(i*4))&0xF;
-        __putc(hexchars[nibble]);
+        putc(hexchars[nibble]);
     }
-    __putc('\n');
+    putc('\n');
 }
 void RiscV::handleTrap(uint64* sp) {
     uint64 sstatus = r_sstatus();

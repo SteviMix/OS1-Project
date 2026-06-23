@@ -5,7 +5,7 @@
 #include "../h/RiscV.hpp"
 #include "../h/syscall_cpp.hpp"
 #include "../h/ConsoleHandler.hpp"
-#include "../h/syscall_cpp.hpp"
+#include "../h/syscall_c.hpp"
 #include "../lib/hw.h" // Koristimo __putc iz hw.lib za štampanje
 
 // Pravimo klasu koja nasleđuje Thread (testira zaštićeni konstruktor i run metodu)
@@ -20,41 +20,42 @@ public:
     int count = 0;
     // Polimorfna metoda koju jezgro treba da izvrši
     void run() override {
-        __putc(id);
-        __putc('s');
+        putc(id);
+        putc('s');
         time_sleep(sleeptime);
-        __putc(id);
-        __putc('w');
-        __putc('\n');
+        putc(id);
+        putc('w');
+        putc('\n');
 
         mainSem->signal();
 
     }
 };
 void userMainMoj() {
-    putc('S'); __putc('t'); __putc('a'); __putc('r'); __putc('t'); __putc('\n');
+    putc('S');
+    Thread::dispatch();
+    putc('t'); putc('a'); putc('r'); putc('t'); putc('\n');
     mainSem = new Semaphore(0);
     // Test operatora new (alokator memorije)
-    __putc('1');
+    putc('1');
     TestThread* t1 = new TestThread('A', 200);
 
-    __putc('2');
+    putc('2');
     TestThread* t2 = new TestThread('B', 30);
 
-    __putc('3');
+    putc('3');
     TestThread* t3 = new  TestThread('C', 100);
 
 
     // Ubacujemo ih u red spremnih
-    t1->start();
-    t2->start();
-    t3->start();
+    while (true) {
+        char c = getc();
 
+        putc(c);
 
-    // userMain mora da prepušta procesor kako bi t1 i t2 dobili šansu da rade.
-    // Vrtimo dovoljno iteracija da niti stignu da završe svoj posao.
-    for (int i = 0; i < 3; i++) {
-        mainSem->wait();
+        if (c == '\r') {
+            putc('\n');
+        }
     }
 
 
@@ -64,7 +65,7 @@ void userMainMoj() {
     delete t2;
     delete t3;
     delete mainSem;
-    __putc('\n'); __putc('E'); __putc('n'); __putc('d'); __putc('\n');
+    putc('\n'); putc('E'); putc('n'); putc('d'); putc('\n');
 
 }
 extern "C" void trap();
@@ -78,13 +79,13 @@ int main() {
 
 
     TCB::running = TCB::createThread(nullptr,nullptr,nullptr);
-    putc('D');
+
 
     Thread* userThread = new Thread(reinterpret_cast<void(*)(void*)>(userMainMoj), nullptr);
 
     userThread->start();
 
-    __putc('\n');
+    putc('\n');
     while (true) {
         Thread::dispatch();
     }
