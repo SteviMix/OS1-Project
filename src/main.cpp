@@ -49,6 +49,7 @@ void userMainMoj() {
 
     // Ubacujemo ih u red spremnih
     while (true) {
+
         char c = getc();
 
         putc(c);
