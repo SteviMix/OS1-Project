@@ -6,7 +6,7 @@
 #define OS1_PROJECT_BOUNDEDBUFFER_HPP
 
 #include "syscall_cpp.hpp"
-
+#include "MemoryAllocator.hpp"
 class BoundedBuffer {
     public:
     BoundedBuffer(int capacity);

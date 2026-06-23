@@ -155,7 +155,7 @@ int time_sleep(time_t time) {
     int ret;
 
     __asm__ volatile(
-        "mv a1, %0 \n\t"
+        "mv a1, %1 \n\t"
         "li a0, 0x31 \n\t"
         "ecall\n\t"
         "mv %0, a0 \n\t"
@@ -167,10 +167,22 @@ int time_sleep(time_t time) {
 }
 volatile char inputChar = 0;
 char getc() {
-    console_handler();
-    return __getc();
+    char ret;
+
+    __asm__ volatile(
+        "li a0, 0x41 \n\t"
+        "ecall \n\t"
+        "mv %0, a0 \n\t"
+        : "=r" (ret)
+        );
+    return ret;
 }
 
 void putc(char c) {
-    __putc(c);
+    __asm__ volatile (
+        "mv a1, %0 \n\t"
+        "li a0, 0x42 \n\t"
+        "ecall \n\t"
+        :
+        : "r" (c));
 }

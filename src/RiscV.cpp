@@ -2,6 +2,8 @@
 // Created by os on 6/9/26.
 //
 #include "../h/RiscV.hpp"
+
+#include "../h/ConsoleHandler.hpp"
 #include "../h/MemoryAllocator.hpp"
 #include "../h/Scheduler.hpp"
 #include "../lib/console.h"
@@ -9,12 +11,20 @@
 #include "../h/syscall_c.hpp"
 #include "../h/_sem.hpp"
 #include "../test/printing.hpp"
+#include "../h/ConsoleHandler.hpp"
 
 void RiscV::popSppSpie() {
     __asm__ volatile ("csrw sepc, ra");
     __asm__ volatile ("sret");
 }
-
+void PrintHex(uint64 val) {
+    const char hexchars[] = "0123456789ABCDEF";
+    for (int i = 15; i >=0;i--) {
+        uint64 nibble = (val>>(i*4))&0xF;
+        __putc(hexchars[nibble]);
+    }
+    __putc('\n');
+}
 void RiscV::handleTrap(uint64* sp) {
     uint64 sstatus = r_sstatus();
     uint64 scause = r_scause();
@@ -35,8 +45,13 @@ void RiscV::handleTrap(uint64* sp) {
             }
         }
         if (causecode == 9) {
+            int irq = plic_claim();
 
-            console_handler();
+            if (irq == 0x0a) {
+                ConsoleHandler::handleConsoleInterrupt();
+            }
+
+            plic_complete(irq);
         }
 
     }else {
@@ -144,31 +159,32 @@ void RiscV::handleTrap(uint64* sp) {
                     sp[10] = 0;
                     break;
                 }
+                case 0x41: {
+                    char c = ConsoleHandler::getc();
+                    sp[10] = (uint64)c;
+                    break;
+                }
+                case 0x42: {
+                    uint64 c;
+                    c = sp[11];
+                    ConsoleHandler::putc((char)c);
+                    break;
+                }
+
 
             }
             w_sepc(sepc+4);
         }
         else {
+
             uint64 scause = r_scause();
             uint64 stval = r_stval();
             uint64 stvec = r_stvec();
             uint64 sepc = r_sepc();
+            PrintHex(scause);
+            PrintHex(stval);
+            PrintHex(stvec);
 
-            printString("scause: ");
-            printInt(scause);
-            printString("\n");
-
-            printString("stval: ");
-            printInt(stval);
-            printString("\n");
-
-            printString("stvec: ");
-            printInt(stvec);
-            printString("\n");
-
-            printString("sepc: ");
-            printInt(sepc);
-            printString("\n");
             w_sepc(sepc+4);
         }
     }

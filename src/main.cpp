@@ -4,7 +4,7 @@
 #include "../h/Scheduler.hpp"
 #include "../h/RiscV.hpp"
 #include "../h/syscall_cpp.hpp"
-
+#include "../h/ConsoleHandler.hpp"
 #include "../h/syscall_cpp.hpp"
 #include "../lib/hw.h" // Koristimo __putc iz hw.lib za štampanje
 
@@ -32,7 +32,7 @@ public:
     }
 };
 void userMainMoj() {
-    __putc('S'); __putc('t'); __putc('a'); __putc('r'); __putc('t'); __putc('\n');
+    putc('S'); __putc('t'); __putc('a'); __putc('r'); __putc('t'); __putc('\n');
     mainSem = new Semaphore(0);
     // Test operatora new (alokator memorije)
     __putc('1');
@@ -74,8 +74,11 @@ int main() {
     MemoryAllocator::init();
 
     RiscV::w_stvec((uint64) &trap);
+    ConsoleHandler::init();
+
 
     TCB::running = TCB::createThread(nullptr,nullptr,nullptr);
+    putc('D');
 
     Thread* userThread = new Thread(reinterpret_cast<void(*)(void*)>(userMainMoj), nullptr);
 
