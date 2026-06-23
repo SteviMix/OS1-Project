@@ -39,7 +39,7 @@ void TCB::threadWrapper(){
         RiscV::mc_sstatus(RiscV::SSTATUS_SPP);
     else
         RiscV::ms_sstatus(RiscV::SSTATUS_SPP);
-    RiscV::ms_sstatus(RiscV::SSTATUS_SIE);
+    RiscV::ms_sstatus(RiscV::SSTATUS_SPIE);
     RiscV::popSppSpie();
     running->body(running->arg);
     thread_exit();

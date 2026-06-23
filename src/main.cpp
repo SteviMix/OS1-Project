@@ -32,23 +32,12 @@ public:
     }
 };
 void userMainMoj() {
-    putc('S');
-    Thread::dispatch();
-    putc('t'); putc('a'); putc('r'); putc('t'); putc('\n');
-    mainSem = new Semaphore(0);
-    // Test operatora new (alokator memorije)
-    putc('1');
-    TestThread* t1 = new TestThread('A', 200);
+    putc('S');putc('t'); putc('a'); putc('r'); putc('t'); putc('\n');
 
-    putc('2');
-    TestThread* t2 = new TestThread('B', 30);
-
-    putc('3');
-    TestThread* t3 = new  TestThread('C', 100);
 
 
     // Ubacujemo ih u red spremnih
-    while (true) {
+
 
         char c = getc();
 
@@ -57,15 +46,12 @@ void userMainMoj() {
         if (c == '\r') {
             putc('\n');
         }
+
+    while (true) {
+        for (volatile int i = 0; i < 20000000; i++);
+        putc('F');putc('\n');
     }
 
-
-
-    // Oslobađamo objekte (test operatora delete)
-    delete t1;
-    delete t2;
-    delete t3;
-    delete mainSem;
     putc('\n'); putc('E'); putc('n'); putc('d'); putc('\n');
 
 }
@@ -81,8 +67,7 @@ int main() {
 
     TCB::running = TCB::createThread(nullptr,nullptr,nullptr);
 
-
-    Thread* userThread = new Thread(reinterpret_cast<void(*)(void*)>(userMainMoj), nullptr);
+    Thread* userThread = new Thread(reinterpret_cast<void(*)(void*)>(userMain), nullptr);
 
     userThread->start();
 

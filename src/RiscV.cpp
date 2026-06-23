@@ -47,7 +47,7 @@ void RiscV::handleTrap(uint64* sp) {
         if (causecode == 9) {
             int irq = plic_claim();
 
-            if (irq == 0x0a) {
+            if (irq == CONSOLE_IRQ) {
                 ConsoleHandler::handleConsoleInterrupt();
             }
 
