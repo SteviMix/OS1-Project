@@ -5,8 +5,9 @@
 #ifndef OS1_PROJECT_BOUNDEDBUFFER_HPP
 #define OS1_PROJECT_BOUNDEDBUFFER_HPP
 
-#include "syscall_cpp.hpp"
+
 #include "MemoryAllocator.hpp"
+#include "_sem.hpp"
 class BoundedBuffer {
     public:
     BoundedBuffer(int capacity);
@@ -30,7 +31,7 @@ private:
     int capacity;
     int head, tail;
 
-    Semaphore* spaceAvailable;
-    Semaphore* itemAvailable;
+    _sem* spaceAvailable;
+    _sem* itemAvailable;
 };
 #endif //OS1_PROJECT_BOUNDEDBUFFER_HPP
