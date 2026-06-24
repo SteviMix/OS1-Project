@@ -31,25 +31,34 @@ public:
 
     }
 };
+
+class getthread : public Thread {
+private:
+    char c;
+public:
+
+    void run() override {
+        while (true) {
+            putc('F');
+            c = getc();
+            putc(c);
+        }
+    }
+
+};
 void userMainMoj() {
     putc('S');putc('t'); putc('a'); putc('r'); putc('t'); putc('\n');
 
 
 
     // Ubacujemo ih u red spremnih
+    Thread* t = new getthread();
+    t->start();
 
 
-        char c = getc();
-
-        putc(c);
-
-        if (c == '\r') {
-            putc('\n');
-        }
 
     while (true) {
-        for (volatile int i = 0; i < 20000000; i++);
-        putc('F');putc('\n');
+
     }
 
     putc('\n'); putc('E'); putc('n'); putc('d'); putc('\n');
@@ -67,7 +76,7 @@ int main() {
 
     TCB::running = TCB::createThread(nullptr,nullptr,nullptr);
 
-    Thread* userThread = new Thread(reinterpret_cast<void(*)(void*)>(userMain), nullptr);
+    Thread* userThread = new Thread(reinterpret_cast<void(*)(void*)>(userMainMoj), nullptr);
 
     userThread->start();
 
