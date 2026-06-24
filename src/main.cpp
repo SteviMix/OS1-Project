@@ -76,7 +76,7 @@ int main() {
 
     TCB::running = TCB::createThread(nullptr,nullptr,nullptr);
 
-    Thread* userThread = new Thread(reinterpret_cast<void(*)(void*)>(userMainMoj), nullptr);
+    Thread* userThread = new Thread(reinterpret_cast<void(*)(void*)>(userMain), nullptr);
 
     userThread->start();
 
