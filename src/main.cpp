@@ -41,7 +41,8 @@ public:
         while (true) {
             putc('F');
             c = getc();
-            putc(c);
+            __putc(c);
+            __putc('\n');
         }
     }
 
@@ -58,7 +59,6 @@ void userMainMoj() {
 
 
     while (true) {
-
     }
 
     putc('\n'); putc('E'); putc('n'); putc('d'); putc('\n');

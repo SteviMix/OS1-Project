@@ -17,6 +17,7 @@ public:
     static void handleConsoleInterrupt();
 
     static void printerThreadBody(void* arg);
+
 private:
     static BoundedBuffer* inputBuffer;
     static BoundedBuffer* outputBuffer;
