@@ -5,7 +5,6 @@
 #include "../h/ConsoleHandler.hpp"
 #include "../lib/hw.h"
 #include "../h/syscall_cpp.hpp"
-#include "../lib/console.h"
 BoundedBuffer* ConsoleHandler::inputBuffer = nullptr;
 BoundedBuffer* ConsoleHandler::outputBuffer = nullptr;
 

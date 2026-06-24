@@ -6,11 +6,9 @@
 #include "../h/ConsoleHandler.hpp"
 #include "../h/MemoryAllocator.hpp"
 #include "../h/Scheduler.hpp"
-#include "../lib/console.h"
 #include "../h/tcb.hpp"
 #include "../h/syscall_c.hpp"
 #include "../h/_sem.hpp"
-#include "../test/printing.hpp"
 #include "../h/ConsoleHandler.hpp"
 
 void RiscV::popSppSpie() {

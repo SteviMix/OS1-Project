@@ -6,7 +6,6 @@
 
 #include "../h/MemoryAllocator.hpp"
 #include "../lib/hw.h"
-#include "../lib/console.h"
 void* mem_alloc(size_t size) {
     void* ptr;
 
