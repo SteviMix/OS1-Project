@@ -53,7 +53,6 @@ int Thread::start() {
     }else {
         return thread_create(&myHandle, threadWrapper, this);
     }
-    return 0;
 }
 
 int Thread::sleep(time_t time) {
@@ -65,6 +64,22 @@ void Thread::dispatch () {
 }
 
 Thread::~Thread () {
+}
+
+void PeriodicThread::terminate() {
+    period = 0;
+}
+
+PeriodicThread::PeriodicThread(time_t period) : period(period){
+
+}
+
+
+void PeriodicThread::run() {
+    while(period != 0){
+        periodicActivation();
+        time_sleep(period);
+    }
 }
 
 Semaphore::Semaphore (unsigned init) {
