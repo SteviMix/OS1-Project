@@ -27,8 +27,10 @@ char ConsoleHandler::getc() {
 }
 
 void ConsoleHandler::handleConsoleInterrupt() {
-    while (*((volatile uint8*)CONSOLE_STATUS)&CONSOLE_RX_DATA) {
+
+    while (*((volatile char*)CONSOLE_STATUS)&CONSOLE_RX_STATUS_BIT) {
         char c = *((volatile char*)CONSOLE_RX_DATA);
+
         if (c!= 0) {
             inputBuffer->put(c);
         }
@@ -40,7 +42,7 @@ void ConsoleHandler::printerThreadBody(void* arg) {
     while (true) {
         char c = outputBuffer->get();
 
-        while ((*((volatile uint8*)CONSOLE_STATUS)&CONSOLE_TX_STATUS_BIT) == 0) {
+        while ((*((volatile char*)CONSOLE_STATUS)&CONSOLE_TX_STATUS_BIT) == 0) {
             Thread::dispatch();
         }
         *((volatile char*)CONSOLE_TX_DATA) = c;
