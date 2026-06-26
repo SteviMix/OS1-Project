@@ -182,6 +182,7 @@ void RiscV::handleTrap(uint64* sp) {
             PrintHex(scause);
             PrintHex(stval);
             PrintHex(stvec);
+            PrintHex(sepc);
 
             w_sepc(sepc+4);
         }
