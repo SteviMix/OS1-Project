@@ -3,7 +3,6 @@
 #include "buffer_CPP_API.hpp"
 #include "printing.hpp"
 
-
 static Semaphore *waitForAll;
 
 struct thread_data {

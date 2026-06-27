@@ -32,3 +32,23 @@ char BoundedBuffer::get() {
     spaceAvailable->signal(1);
     return c;
 }
+bool BoundedBuffer::putNonBlocking(char c) {
+    int next = (tail + 1) % capacity;
+    if (next == head) {
+        return false;
+    }
+    buffer[tail] = c;
+    tail = next;
+    itemAvailable->signal(1);
+    return true;
+}
+
+bool BoundedBuffer::getNonBlocking(char& out) {
+    if (head == tail) {
+        return false;
+    }
+    out = buffer[head];
+    head = (head + 1) % capacity;
+    spaceAvailable->signal(1);
+    return true;
+}

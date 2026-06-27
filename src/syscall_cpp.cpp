@@ -56,7 +56,7 @@ int Thread::start() {
 }
 
 int Thread::sleep(time_t time) {
-    return 0;
+    return time_sleep(time);
 }
 
 void Thread::dispatch () {

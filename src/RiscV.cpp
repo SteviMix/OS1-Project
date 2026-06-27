@@ -9,7 +9,6 @@
 #include "../h/tcb.hpp"
 #include "../h/syscall_c.hpp"
 #include "../h/_sem.hpp"
-#include "../h/ConsoleHandler.hpp"
 
 void RiscV::popSppSpie() {
     __asm__ volatile ("csrw sepc, ra");
@@ -174,17 +173,12 @@ void RiscV::handleTrap(uint64* sp) {
             w_sepc(sepc+4);
         }
         else {
+            if (causecode == 2 && sepc < 0x80003000) {
+                w_sepc(sepc + 4);
+            } else {
 
-            uint64 scause = r_scause();
-            uint64 stval = r_stval();
-            uint64 stvec = r_stvec();
-            uint64 sepc = r_sepc();
-            PrintHex(scause);
-            PrintHex(stval);
-            PrintHex(stvec);
-            PrintHex(sepc);
 
-            w_sepc(sepc+4);
+            }
         }
     }
 }
