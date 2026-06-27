@@ -173,12 +173,7 @@ void RiscV::handleTrap(uint64* sp) {
             w_sepc(sepc+4);
         }
         else {
-            if (causecode == 2 && sepc < 0x80003000) {
-                w_sepc(sepc + 4);
-            } else {
 
-
-            }
         }
     }
 }

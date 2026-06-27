@@ -1,3 +1,5 @@
+
+
 #include "../h/MemoryAllocator.hpp"
 #include "../h/tcb.hpp"
 #include "../h/RiscV.hpp"
@@ -21,13 +23,15 @@ int main() {
     TCB::running = TCB::createThread(nullptr,nullptr,nullptr);
     thread_t idle;
     thread_create(&idle, idleBody, nullptr);
-    Thread* userThread = new Thread(reinterpret_cast<void(*)(void*)>(userMain), nullptr);
+    thread_t userThread;
 
-    userThread->start();
+    thread_create(&userThread, reinterpret_cast<void(*)(void*)>(userMain), nullptr);
 
-    putc('\n');
-    while (true) {
+
+    while (((TCB*)userThread)->isFinished() == false) {
         Thread::dispatch();
     }
+
+    *((volatile uint32*)0x100000) = 0x5555;
     return 0;
 }
