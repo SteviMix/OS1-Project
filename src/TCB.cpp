@@ -63,6 +63,7 @@ void TCB::dispatch() {
 
     if (newTCB != nullptr && oldTCB != newTCB) {
         running = newTCB;
+        timeSliceCounter = 0;
         contextSwitch(&oldTCB->sp, &newTCB->sp);
     }
 }
