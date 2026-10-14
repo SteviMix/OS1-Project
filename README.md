@@ -1,4 +1,4 @@
-![Build](https://github.com/SteviMix/IME-REPOA/actions/workflows/main.yml/badge.svg)
+[![Build kernel](https://github.com/SteviMix/OS1-Project/actions/workflows/main.yml/badge.svg)](https://github.com/SteviMix/OS1-Project/actions/workflows/main.yml)
 # OS1 — A Small Multithreaded RISC-V Kernel
 
 An educational operating system kernel for the **RISC-V (RV64IMA)** architecture, developed for the Operating Systems 1 course at the School of Electrical Engineering, University of Belgrade. The kernel runs on the **qemu** emulator over a modified **xv6** environment, and implements memory management, threads, semaphores, and asynchronous context switching — all written from scratch, without relying on any host operating system services.
