@@ -37,7 +37,7 @@ LD      = ${TOOLPREFIX}ld
 OBJCOPY = ${TOOLPREFIX}objcopy
 OBJDUMP = ${TOOLPREFIX}objdump
 
-ASFLAGS = -ggdb -march=rv64ima -mabi=lp64
+ASFLAGS = -c -g -march=rv64ima -mabi=lp64
 
 CFLAGS  = -Wall -Werror -Og -ggdb
 CFLAGS += -nostdlib
